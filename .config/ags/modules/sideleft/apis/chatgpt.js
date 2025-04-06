@@ -9,14 +9,12 @@ import {
   setupCursorHoverInfo,
 } from "../../.widgetutils/cursorhover.js";
 import { SystemMessage, ChatMessage } from "./ai_chatmessage.js";
-import {
-  ConfigToggle,
-  ConfigSegmentedSelection,
-  ConfigGap,
-} from "../../.commonwidgets/configwidgets.js";
-import { markdownTest } from "../../.miscutils/md2pango.js";
-import { MarginRevealer } from "../../.widgethacks/advancedrevealers.js";
-import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
+import { ConfigToggle, ConfigSegmentedSelection, ConfigGap } from '../../.commonwidgets/configwidgets.js';
+import { markdownTest } from '../../.miscutils/md2pango.js';
+import { MarginRevealer } from '../../.widgethacks/advancedrevealers.js';
+import { MaterialIcon } from '../../.commonwidgets/materialicon.js';
+
+const AGS_CONFIG_FILE = `${App.configDir}/user_options.jsonc`;
 
 export const chatGPTTabIcon = Icon({
   hpack: "center",
@@ -24,110 +22,98 @@ export const chatGPTTabIcon = Icon({
 });
 
 const ProviderSwitcher = () => {
-  const ProviderChoice = (id, provider) => {
-    const providerSelected = MaterialIcon("check", "norm", {
-      setup: (self) =>
-        self.hook(
-          GPTService,
-          (self) => {
-            self.toggleClassName("invisible", GPTService.providerID !== id);
-          },
-          "providerChanged"
-        ),
+    const ProviderChoice = (id, provider) => {
+        const providerSelected = MaterialIcon('check', 'norm', {
+            setup: (self) => self.hook(GPTService, (self) => {
+                self.toggleClassName('invisible', GPTService.providerID !== id);
+            }, 'providerChanged')
+        });
+        return Button({
+            tooltipText: provider.description,
+            onClicked: () => {
+                GPTService.providerID = id;
+                providerList.revealChild = false;
+                indicatorChevron.label = 'expand_more';
+                // Save provider to config
+                Utils.execAsync(['bash', '-c', `${App.configDir}/scripts/ags/agsconfigurator.py \
+                    --key ai.defaultGPTProvider \
+                    --value ${id} \
+                    --file ${AGS_CONFIG_FILE}`
+                ]).catch(print);
+            },
+            child: Box({
+                className: 'spacing-h-10 txt',
+                children: [
+                    Icon({
+                        icon: provider['logo_name'],
+                        className: 'txt-large'
+                    }),
+                    Label({
+                        hexpand: true,
+                        xalign: 0,
+                        className: 'txt-small',
+                        label: provider.name,
+                    }),
+                    providerSelected
+                ],
+            }),
+            setup: setupCursorHover,
+        });
+    }
+    const indicatorChevron = MaterialIcon('expand_more', 'norm');
+    const indicatorButton = Button({
+        tooltipText: getString('Select ChatGPT-compatible API provider'),
+        child: Box({
+            className: 'spacing-h-10 txt',
+            children: [
+                MaterialIcon('cloud', 'norm'),
+                Label({
+                    hexpand: true,
+                    xalign: 0,
+                    className: 'txt-small',
+                    label: GPTService.providerID,
+                    setup: (self) => self.hook(GPTService, (self) => {
+                        self.label = `${GPTService.providers[GPTService.providerID]['name']}`;
+                    }, 'providerChanged')
+                }),
+                indicatorChevron,
+            ]
+        }),
+        onClicked: () => {
+            providerList.revealChild = !providerList.revealChild;
+            indicatorChevron.label = (providerList.revealChild ? 'expand_less' : 'expand_more');
+        },
+        setup: setupCursorHover,
     });
-    return Button({
-      tooltipText: provider.description,
-      onClicked: () => {
-        GPTService.providerID = id;
-        providerList.revealChild = false;
-        indicatorChevron.label = "expand_more";
-      },
-      child: Box({
-        className: "spacing-h-10 txt",
+    const providerList = Revealer({
+        revealChild: false,
+        transition: 'slide_down',
+        transitionDuration: userOptions.animations.durationLarge,
+        child: Box({
+            vertical: true, className: 'spacing-v-5 sidebar-chat-providerswitcher-list',
+            children: [
+                Box({ className: 'separator-line margin-top-5 margin-bottom-5' }),
+                Box({
+                    className: 'spacing-v-5',
+                    vertical: true,
+                    setup: (self) => self.hook(GPTService, (self) => {
+                        self.children = Object.entries(GPTService.providers)
+                            .map(([id, provider]) => ProviderChoice(id, provider));
+                    }, 'initialized'),
+                })
+            ]
+        })
+    })
+    return Box({
+        hpack: 'center',
+        vertical: true,
+        className: 'sidebar-chat-providerswitcher',
         children: [
-          Icon({
-            icon: provider["logo_name"],
-            className: "txt-large",
-          }),
-          Label({
-            hexpand: true,
-            xalign: 0,
-            className: "txt-small",
-            label: provider.name,
-          }),
-          providerSelected,
-        ],
-      }),
-      setup: setupCursorHover,
-    });
-  };
-  const indicatorChevron = MaterialIcon("expand_more", "norm");
-  const indicatorButton = Button({
-    tooltipText: getString("Select ChatGPT-compatible API provider"),
-    child: Box({
-      className: "spacing-h-10 txt",
-      children: [
-        MaterialIcon("cloud", "norm"),
-        Label({
-          hexpand: true,
-          xalign: 0,
-          className: "txt-small",
-          label: GPTService.providerID,
-          setup: (self) =>
-            self.hook(
-              GPTService,
-              (self) => {
-                self.label = `${
-                  GPTService.providers[GPTService.providerID]["name"]
-                }`;
-              },
-              "providerChanged"
-            ),
-        }),
-        indicatorChevron,
-      ],
-    }),
-    onClicked: () => {
-      providerList.revealChild = !providerList.revealChild;
-      indicatorChevron.label = providerList.revealChild
-        ? "expand_less"
-        : "expand_more";
-    },
-    setup: setupCursorHover,
-  });
-  const providerList = Revealer({
-    revealChild: false,
-    transition: "slide_down",
-    transitionDuration: userOptions.animations.durationLarge,
-    child: Box({
-      vertical: true,
-      className: "spacing-v-5 sidebar-chat-providerswitcher-list",
-      children: [
-        Box({ className: "separator-line margin-top-5 margin-bottom-5" }),
-        Box({
-          className: "spacing-v-5",
-          vertical: true,
-          setup: (self) =>
-            self.hook(
-              GPTService,
-              (self) => {
-                self.children = Object.entries(GPTService.providers).map(
-                  ([id, provider]) => ProviderChoice(id, provider)
-                );
-              },
-              "initialized"
-            ),
-        }),
-      ],
-    }),
-  });
-  return Box({
-    hpack: "center",
-    vertical: true,
-    className: "sidebar-chat-providerswitcher",
-    children: [indicatorButton, providerList],
-  });
-};
+            indicatorButton,
+            providerList,
+        ]
+    })
+}
 
 const GPTInfo = () => {
   const openAiLogo = Icon({

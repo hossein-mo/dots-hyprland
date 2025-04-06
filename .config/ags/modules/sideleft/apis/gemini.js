@@ -9,13 +9,10 @@ import {
   setupCursorHoverInfo,
 } from "../../.widgetutils/cursorhover.js";
 import { SystemMessage, ChatMessage } from "./ai_chatmessage.js";
-import {
-  ConfigToggle,
-  ConfigSegmentedSelection,
-  ConfigGap,
-} from "../../.commonwidgets/configwidgets.js";
-import { markdownTest } from "../../.miscutils/md2pango.js";
-import { MarginRevealer } from "../../.widgethacks/advancedrevealers.js";
+import { ConfigToggle, ConfigSegmentedSelection, ConfigGap } from '../../.commonwidgets/configwidgets.js';
+import { markdownTest } from '../../.miscutils/md2pango.js';
+import { MarginRevealer } from '../../.widgethacks/advancedrevealers.js';
+import { AgsToggle } from '../../.commonwidgets/configwidgets_apps.js';
 
 const MODEL_NAME = `Gemini`;
 
@@ -25,45 +22,43 @@ export const geminiTabIcon = Icon({
 });
 
 const GeminiInfo = () => {
-  const geminiLogo = Icon({
-    hpack: "center",
-    className: "sidebar-chat-welcome-logo",
-    icon: `google-gemini-symbolic`,
-  });
-  return Box({
-    vertical: true,
-    className: "spacing-v-15",
-    children: [
-      geminiLogo,
-      Label({
-        className: "txt txt-title-small sidebar-chat-welcome-txt",
-        wrap: true,
-        justify: Gtk.Justification.CENTER,
-        label: `Assistant (Gemini)`,
-      }),
-      Box({
-        className: "spacing-h-5",
-        hpack: "center",
+    const geminiLogo = Icon({
+        hpack: 'center',
+        className: 'sidebar-chat-welcome-logo',
+        icon: `google-gemini-symbolic`,
+    });
+    return Box({
+        vertical: true,
+        className: 'spacing-v-15',
         children: [
-          Label({
-            className: "txt-smallie txt-subtext",
-            wrap: true,
-            justify: Gtk.Justification.CENTER,
-            label: getString("Powered by Google"),
-          }),
-          Button({
-            className: "txt-subtext txt-norm icon-material",
-            label: "info",
-            tooltipText: getString(
-              "Uses gemini-pro.\nNot affiliated, endorsed, or sponsored by Google.\n\nPrivacy: Chat messages aren't linked to your account,\n    but will be read by human reviewers to improve the model."
-            ),
-            setup: setupCursorHoverInfo,
-          }),
-        ],
-      }),
-    ],
-  });
-};
+            geminiLogo,
+            Label({
+                className: 'txt txt-title-small sidebar-chat-welcome-txt',
+                wrap: true,
+                justify: Gtk.Justification.CENTER,
+                label: `Assistant (Gemini)`,
+            }),
+            Box({
+                className: 'spacing-h-5',
+                hpack: 'center',
+                children: [
+                    Label({
+                        className: 'txt-smallie txt-subtext',
+                        wrap: true,
+                        justify: Gtk.Justification.CENTER,
+                        label: getString('Powered by Google'),
+                    }),
+                    Button({
+                        className: 'txt-subtext txt-norm icon-material',
+                        label: 'info',
+                        tooltipText: getString("Not affiliated, endorsed, or sponsored by Google.\n\nPrivacy: Chat messages aren't linked to your account,\nbut will be read by human reviewers to improve the model."),
+                        setup: setupCursorHoverInfo,
+                    }),
+                ]
+            }),
+        ]
+    });
+}
 
 export const GeminiSettings = () =>
   MarginRevealer({
@@ -88,70 +83,71 @@ export const GeminiSettings = () =>
           "clear"
         ),
     child: Box({
-      vertical: true,
-      className: "sidebar-chat-settings",
-      children: [
-        ConfigSegmentedSelection({
-          hpack: "center",
-          icon: "casino",
-          name: "Randomness",
-          desc: getString(
-            "Gemini's temperature value.\n  Precise = 0\n  Balanced = 0.5\n  Creative = 1"
-          ),
-          options: [
-            { value: 0.0, name: getString("Precise") },
-            { value: 0.5, name: getString("Balanced") },
-            { value: 1.0, name: getString("Creative") },
-          ],
-          initIndex: userOptions.ai.precision,
-          onChange: (value, name) => {
-            GeminiService.temperature = value;
-          },
-        }),
-        ConfigGap({ vertical: true, size: 10 }), // Note: size can only be 5, 10, or 15
-        Box({
-          vertical: true,
-          hpack: "center",
-          className: "sidebar-chat-settings-toggles",
-          children: [
-            ConfigToggle({
-              icon: "model_training",
-              name: getString("Prompt"),
-              desc: getString(
-                "Tells Gemini:\n- It's a Linux sidebar assistant\n- Be brief and use bullet points"
-              ),
-              initValue: GeminiService.assistantPrompt,
-              onChange: (self, newValue) => {
-                GeminiService.assistantPrompt = newValue;
-              },
+        vertical: true,
+        className: 'sidebar-chat-settings',
+        children: [
+            ConfigSegmentedSelection({
+                hpack: 'center',
+                icon: 'casino',
+                name: 'Randomness',
+                desc: getString("Gemini's temperature value.\n  Precise = 0\n  Balanced = 0.5\n  Creative = 1"),
+                options: [
+                    { value: 0.00, name: getString('Precise'), },
+                    { value: 0.50, name: getString('Balanced'), },
+                    { value: 1.00, name: getString('Creative'), },
+                ],
+                initIndex: userOptions.ai.precision,
+                onChange: (value, name) => {
+                    GeminiService.temperature = value;
+                },
             }),
-            ConfigToggle({
-              icon: "shield",
-              name: getString("Safety"),
-              desc: getString(
-                "When turned off, tells the API (not the model) \nto not block harmful/explicit content"
-              ),
-              initValue: GeminiService.safe,
-              onChange: (self, newValue) => {
-                GeminiService.safe = newValue;
-              },
-            }),
-            ConfigToggle({
-              icon: "history",
-              name: getString("History"),
-              desc: getString(
-                "Saves chat history\nMessages in previous chats won't show automatically, but they are there"
-              ),
-              initValue: GeminiService.useHistory,
-              onChange: (self, newValue) => {
-                GeminiService.useHistory = newValue;
-              },
-            }),
-          ],
-        }),
-      ],
-    }),
-  });
+            ConfigGap({ vertical: true, size: 10 }), // Note: size can only be 5, 10, or 15
+            Box({
+                vertical: true,
+                hpack: 'center',
+                className: 'sidebar-chat-settings-toggles',
+                children: [
+                    AgsToggle({
+                        icon: 'model_training',
+                        name: getString('Prompt'),
+                        desc: getString("Tells Gemini:\n- It's a Linux sidebar assistant\n- Be brief and use bullet points"),
+                        option: "ai.enhancements",
+                        extraOnChange: (self, newValue) => {
+                            GeminiService.assistantPrompt = newValue;
+                        },
+                        extraOnReset: (self, newValue) => {
+                            GeminiService.assistantPrompt = userOptions.ai.enhancements;
+                        },
+                    }),
+                    AgsToggle({
+                        icon: 'shield',
+                        name: getString('Safety'),
+                        desc: getString("When turned off, tells the API (not the model) \nto not block harmful/explicit content"),
+                        option: "ai.safety",
+                        extraOnChange: (self, newValue) => {
+                            GeminiService.safe = newValue;
+                        },
+                        extraOnReset: (self, newValue) => {
+                            GeminiService.safe = userOptions.ai.safety;
+                        },
+                    }),
+                    AgsToggle({
+                        icon: 'history',
+                        name: getString('History'),
+                        desc: getString("Saves chat history\nMessages in previous chats won't show automatically, but they are there"),
+                        option: "ai.useHistory",
+                        extraOnChange: (self, newValue) => {
+                            GeminiService.useHistory = newValue;
+                        },
+                        extraOnReset: (self, newValue) => {
+                            GeminiService.useHistory = userOptions.ai.useHistory;
+                        },
+                    })
+                ]
+            })
+        ]
+    })
+});
 
 export const GoogleAiInstructions = () =>
   Box({

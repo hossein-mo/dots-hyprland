@@ -60,13 +60,20 @@ const ProviderSwitcher = () => {
             setup: setupCursorHover,
         });
     }
+    let indicatorIcon = Icon({
+        icon: GPTService.providers[GPTService._currentProvider]['logo_name'],
+        className: 'txt-large',
+        setup: (self) => self.hook(GPTService, (self) => {
+            self.icon = GPTService.providers[GPTService.providerID]['logo_name'];
+        }, 'providerChanged')
+    });
     const indicatorChevron = MaterialIcon('expand_more', 'norm');
     const indicatorButton = Button({
         tooltipText: getString('Select ChatGPT-compatible API provider'),
         child: Box({
             className: 'spacing-h-10 txt',
             children: [
-                MaterialIcon('cloud', 'norm'),
+                indicatorIcon,
                 Label({
                     hexpand: true,
                     xalign: 0,
@@ -116,45 +123,43 @@ const ProviderSwitcher = () => {
 }
 
 const GPTInfo = () => {
-  const openAiLogo = Icon({
-    hpack: "center",
-    className: "sidebar-chat-welcome-logo",
-    icon: `openai-symbolic`,
-  });
-  return Box({
-    vertical: true,
-    className: "spacing-v-15",
-    children: [
-      openAiLogo,
-      Label({
-        className: "txt txt-title-small sidebar-chat-welcome-txt",
-        wrap: true,
-        justify: Gtk.Justification.CENTER,
-        label: `Assistant (GPTs)`,
-      }),
-      Box({
-        className: "spacing-h-5",
-        hpack: "center",
+    const openAiLogo = Icon({
+        hpack: 'center',
+        className: 'sidebar-chat-welcome-logo',
+        icon: `openai-symbolic`,
+    });
+    return Box({
+        vertical: true,
+        className: 'spacing-v-15',
         children: [
-          Label({
-            className: "txt-smallie txt-subtext",
-            wrap: true,
-            justify: Gtk.Justification.CENTER,
-            label: getString("Provider shown above"),
-          }),
-          Button({
-            className: "txt-subtext txt-norm icon-material",
-            label: "info",
-            tooltipText: getString(
-              "Uses gpt-3.5-turbo.\nNot affiliated, endorsed, or sponsored by OpenAI.\n\nPrivacy: OpenAI claims they do not use your data\nwhen you use their API. Idk about others."
-            ),
-            setup: setupCursorHoverInfo,
-          }),
-        ],
-      }),
-    ],
-  });
-};
+            openAiLogo,
+            Label({
+                className: 'txt txt-title-small sidebar-chat-welcome-txt',
+                wrap: true,
+                justify: Gtk.Justification.CENTER,
+                label: `Assistant (GPTs)`,
+            }),
+            Box({
+                className: 'spacing-h-5',
+                hpack: 'center',
+                children: [
+                    Label({
+                        className: 'txt-smallie txt-subtext',
+                        wrap: true,
+                        justify: Gtk.Justification.CENTER,
+                        label: getString('Provider shown above'),
+                    }),
+                    Button({
+                        className: 'txt-subtext txt-norm icon-material',
+                        label: 'info',
+                        tooltipText: getString("Chat with models compatible with OpenAI's Chat Completions API.\nNot affiliated, endorsed, or sponsored by any of the providers."),
+                        setup: setupCursorHoverInfo,
+                    }),
+                ]
+            }),
+        ]
+    });
+}
 
 const GPTSettings = () =>
   MarginRevealer({
@@ -229,14 +234,13 @@ export const OpenaiApiKeyInstructions = () =>
       Revealer({
         transition: "slide_down",
         transitionDuration: userOptions.animations.durationLarge,
-        setup: (self) =>
-          self.hook(
-            GPTService,
-            (self, hasKey) => {
-              self.revealChild = GPTService.key.length == 0;
-            },
-            "hasKey"
-          ),
+        setup: (self) => self
+            .hook(GPTService, (self, hasKey) => {
+                self.revealChild = (
+                    GPTService.providers[GPTService.providerID]["requires_key"]
+                    && GPTService.key.length == 0);
+            }, 'hasKey')
+        ,
         child: Button({
           child: Label({
             useMarkup: true,
@@ -261,31 +265,32 @@ const GPTWelcome = () =>
     vexpand: true,
     homogeneous: true,
     child: Box({
-      className: "spacing-v-15",
-      vpack: "center",
-      vertical: true,
-      children: [GPTInfo(), OpenaiApiKeyInstructions(), GPTSettings()],
-    }),
-  });
+        className: 'spacing-v-15 margin-top-15 margin-bottom-15',
+        vpack: 'center',
+        vertical: true,
+        children: [
+            GPTInfo(),
+            OpenaiApiKeyInstructions(),
+            GPTSettings(),
+        ]
+    })
+});
 
 export const chatContent = Box({
-  className: "spacing-v-5",
-  vertical: true,
-  setup: (self) =>
-    self.hook(
-      GPTService,
-      (box, id) => {
-        const message = GPTService.messages[id];
-        if (!message) return;
-        box.add(
-          ChatMessage(
-            message,
-            `Model (${GPTService.providers[GPTService.providerID]["name"]})`
-          )
-        );
-      },
-      "newMsg"
-    ),
+    className: 'spacing-v-5',
+    vertical: true,
+    setup: (self) => self
+        .hook(GPTService, (box, id) => {
+            const message = GPTService.messages[id];
+            if (!message) return;
+            box.add(ChatMessage(message, `Model (${GPTService.providers[GPTService.providerID]['name']})`))
+        }, 'newMsg')
+        .hook(GPTService, (self, hasKey) => {
+            self.revealChild = (
+                GPTService.providers[GPTService.providerID]["requires_key"]
+                && GPTService.key.length == 0);
+        }, 'providerChanged')
+    ,
 });
 
 const clearChat = () => {
@@ -316,77 +321,50 @@ export const chatGPTCommands = Box({
 });
 
 export const sendMessage = (text) => {
-  // Check if text or API key is empty
-  if (text.length == 0) return;
-  if (GPTService.key.length == 0) {
-    GPTService.key = text;
-    chatContent.add(
-      SystemMessage(
-        `Key saved to\n\`${GPTService.keyPath}\``,
-        "API Key",
-        ChatGPTView
-      )
-    );
-    text = "";
-    return;
-  }
-  // Commands
-  if (text.startsWith("/")) {
-    if (text.startsWith("/clear")) clearChat();
-    else if (text.startsWith("/model"))
-      chatContent.add(
-        SystemMessage(
-          `${getString("Currently using")} \`${GPTService.modelName}\``,
-          "/model",
-          ChatGPTView
-        )
-      );
-    else if (text.startsWith("/prompt")) {
-      const firstSpaceIndex = text.indexOf(" ");
-      const prompt = text.slice(firstSpaceIndex + 1);
-      if (firstSpaceIndex == -1 || prompt.length < 1) {
-        chatContent.add(
-          SystemMessage(`Usage: \`/prompt MESSAGE\``, "/prompt", ChatGPTView)
-        );
-      } else {
-        GPTService.addMessage("user", prompt);
-      }
-    } else if (text.startsWith("/key")) {
-      const parts = text.split(" ");
-      if (parts.length == 1)
-        chatContent.add(
-          SystemMessage(
-            `${getString("Key stored in:")}\n\`${
-              GPTService.keyPath
-            }\`\n${getString(
-              "To update this key, type"
-            )} \`/key YOUR_API_KEY\``,
-            "/key",
-            ChatGPTView
-          )
-        );
-      else {
-        GPTService.key = parts[1];
-        chatContent.add(
-          SystemMessage(
-            `${getString("Updated API Key at")}\n\`${GPTService.keyPath}\``,
-            "/key",
-            ChatGPTView
-          )
-        );
-      }
-    } else if (text.startsWith("/test"))
-      chatContent.add(
-        SystemMessage(markdownTest, `Markdown test`, ChatGPTView)
-      );
-    else
-      chatContent.add(
-        SystemMessage(getString("Invalid command."), "Error", ChatGPTView)
-      );
-  } else {
-    GPTService.send(text);
-  }
-};
+    // Check if text or API key is empty
+    if (text.length == 0) return;
+    if (GPTService.providers[GPTService.providerID]["requires_key"]
+        && GPTService.key.length == 0
+        && !text.startsWith('/key')) {
+        GPTService.key = text;
+        chatContent.add(SystemMessage(`Key saved to \`${GPTService.keyPath}\`\nUpdate anytime with \`/key YOUR_API_KEY\`.`, 'API Key', ChatGPTView));
+        text = '';
+        return;
+    }
+    // Commands
+    if (text.startsWith('/')) {
+        if (text.startsWith('/clear')) clearChat();
+        else if (text.startsWith('/model')) chatContent.add(SystemMessage(`${getString("Currently using")} \`${GPTService.modelName}\``, '/model', ChatGPTView))
+        else if (text.startsWith('/prompt')) {
+            const firstSpaceIndex = text.indexOf(' ');
+            const prompt = text.slice(firstSpaceIndex + 1);
+            if (firstSpaceIndex == -1 || prompt.length < 1) {
+                chatContent.add(SystemMessage(`Usage: \`/prompt MESSAGE\``, '/prompt', ChatGPTView))
+            }
+            else {
+                GPTService.addMessage('user', prompt)
+            }
+        }
+        else if (text.startsWith('/key')) {
+            const parts = text.split(' ');
+            if (parts.length == 1) chatContent.add(SystemMessage(
+                `${getString("Key stored in:")}\n\`${GPTService.keyPath}\`\n${getString("To update this key, type")} \`/key YOUR_API_KEY\``,
+                '/key',
+                ChatGPTView));
+            else {
+                GPTService.key = parts[1];
+                chatContent.add(SystemMessage(`${getString("Updated API Key at")}\n\`${GPTService.keyPath}\``, '/key', ChatGPTView));
+            }
+        }
+        else if (text.startsWith('/test'))
+            chatContent.add(SystemMessage(markdownTest, `Markdown test`, ChatGPTView));
+        else
+            chatContent.add(SystemMessage(getString("Invalid command."), 'Error', ChatGPTView))
+    }
+    else {
+        GPTService.send(text);
+    }
+}
 
 export const ChatGPTView = (chatEntry) =>
   Box({

@@ -188,14 +188,18 @@ export const GoogleAiInstructions = () =>
   });
 
 const geminiWelcome = Box({
-  vexpand: true,
-  homogeneous: true,
-  child: Box({
-    className: "spacing-v-15",
-    vpack: "center",
-    vertical: true,
-    children: [GeminiInfo(), GoogleAiInstructions(), GeminiSettings()],
-  }),
+    vexpand: true,
+    homogeneous: true,
+    child: Box({
+        className: 'spacing-v-15 margin-top-15 margin-bottom-15',
+        vpack: 'center',
+        vertical: true,
+        children: [
+            GeminiInfo(),
+            GoogleAiInstructions(),
+            GeminiSettings(),
+        ]
+    })
 });
 
 export const chatContent = Box({
@@ -241,78 +245,52 @@ export const geminiCommands = Box({
 });
 
 export const sendMessage = (text) => {
-  // Check if text or API key is empty
-  if (text.length == 0) return;
-  if (GeminiService.key.length == 0) {
-    GeminiService.key = text;
-    chatContent.add(
-      SystemMessage(
-        `Key saved to\n\`${GeminiService.keyPath}\``,
-        "API Key",
-        GeminiView
-      )
-    );
-    text = "";
-    return;
-  }
-  // Commands
-  if (text.startsWith("/")) {
-    if (text.startsWith("/clear")) clearChat();
-    else if (text.startsWith("/load")) {
-      clearChat();
-      GeminiService.loadHistory();
-    } else if (text.startsWith("/model"))
-      chatContent.add(
-        SystemMessage(
-          `${getString("Currently using")} \`${GeminiService.modelName}\``,
-          "/model",
-          GeminiView
-        )
-      );
-    else if (text.startsWith("/prompt")) {
-      const firstSpaceIndex = text.indexOf(" ");
-      const prompt = text.slice(firstSpaceIndex + 1);
-      if (firstSpaceIndex == -1 || prompt.length < 1) {
-        chatContent.add(
-          SystemMessage(`Usage: \`/prompt MESSAGE\``, "/prompt", GeminiView)
-        );
-      } else {
-        GeminiService.addMessage("user", prompt);
-      }
-    } else if (text.startsWith("/key")) {
-      const parts = text.split(" ");
-      if (parts.length == 1)
-        chatContent.add(
-          SystemMessage(
-            `${getString("Key stored in:")} \n\`${
-              GeminiService.keyPath
-            }\`\n${getString(
-              "To update this key, type"
-            )} \`/key YOUR_API_KEY\``,
-            "/key",
-            GeminiView
-          )
-        );
-      else {
-        GeminiService.key = parts[1];
-        chatContent.add(
-          SystemMessage(
-            `${getString("Updated API Key at")}\n\`${GeminiService.keyPath}\``,
-            "/key",
-            GeminiView
-          )
-        );
-      }
-    } else if (text.startsWith("/test"))
-      chatContent.add(SystemMessage(markdownTest, `Markdown test`, GeminiView));
-    else
-      chatContent.add(
-        SystemMessage(getString(`Invalid command.`), "Error", GeminiView)
-      );
-  } else {
-    GeminiService.send(text);
-  }
-};
+    // Check if text or API key is empty
+    if (text.length == 0) return;
+    if (GeminiService.key.length == 0) {
+        GeminiService.key = text;
+        chatContent.add(SystemMessage(`Key saved to \`${GeminiService.keyPath}\`\nUpdate anytime with /key YOUR_API_KEY.`, 'API Key', GeminiView));
+        text = '';
+        return;
+    }
+    // Commands
+    if (text.startsWith('/')) {
+        if (text.startsWith('/clear')) clearChat();
+        else if (text.startsWith('/load')) {
+            clearChat();
+            GeminiService.loadHistory();
+        }
+        else if (text.startsWith('/model')) chatContent.add(SystemMessage(`${getString("Currently using")} \`${GeminiService.modelName}\``, '/model', GeminiView))
+        else if (text.startsWith('/prompt')) {
+            const firstSpaceIndex = text.indexOf(' ');
+            const prompt = text.slice(firstSpaceIndex + 1);
+            if (firstSpaceIndex == -1 || prompt.length < 1) {
+                chatContent.add(SystemMessage(`Usage: \`/prompt MESSAGE\``, '/prompt', GeminiView))
+            }
+            else {
+                GeminiService.addMessage('user', prompt)
+            }
+        }
+        else if (text.startsWith('/key')) {
+            const parts = text.split(' ');
+            if (parts.length == 1) chatContent.add(SystemMessage(
+                `${getString("Key stored in:")} \n\`${GeminiService.keyPath}\`\n${getString("To update this key, type")} \`/key YOUR_API_KEY\``,
+                '/key',
+                GeminiView));
+            else {
+                GeminiService.key = parts[1];
+                chatContent.add(SystemMessage(`${getString("Updated API Key at")}\n\`${GeminiService.keyPath}\``, '/key', GeminiView));
+            }
+        }
+        else if (text.startsWith('/test'))
+            chatContent.add(SystemMessage(markdownTest, `Markdown test`, GeminiView));
+        else
+            chatContent.add(SystemMessage(getString(`Invalid command.`), 'Error', GeminiView))
+    }
+    else {
+        GeminiService.send(text);
+    }
+}
 
 export const GeminiView = (chatEntry) =>
   Box({

@@ -3,9 +3,11 @@
 {
     // General stuff
     "ai": {
-        "defaultGPTProvider": "openai",
+        "defaultGPTProvider": "ollama_llama_3_2",
         "defaultTemperature": 0.5,
         "enhancements": true,
+        "charsEachUpdate": 50, // Lower = smoother update rate, but more update lag
+        "keep_alive": -1, // For ollama. -1 means forever
         "useHistory": false,
         "safety": true,
         "writingCursor": " ...", // Warning: Using weird characters can mess up Markdown rendering
@@ -20,6 +22,7 @@
             //     "description": "A model added by the user",
             //     "base_url": "http://localhost:11434/v1/chat/completions",
             //     "key_get_url": "",
+            //     "requires_key": false,
             //     "key_file": "api_key_file.txt",
             //     "model": "model-name"
             // },
@@ -50,6 +53,16 @@
         "settings": "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center",
         "taskManager": "gnome-usage",
         "terminal": "foot" // This is only for shell actions
+    },
+    "bar": {
+        // Whether to show Swap and CPU usage when there's media. RAM is always shown.
+        "alwaysShowFullResources": false, 
+        // Array of bar modes for each monitor. Hit Ctrl+Alt+Slash to cycle.
+        // Modes: "normal", "focus" (workspace indicator only), "nothing"
+        // Example for four monitors: ["normal", "focus", "normal", "nothing"]
+        "modes": [
+            "normal"
+        ]
     },
     "battery": {
         "low": 20,
@@ -123,13 +136,15 @@
                 "apis",
                 "tools"
             ],
+            "defaultPage": "apis",
             "apis": {
                 "order": [
                     "gemini",
                     "gpt",
                     "waifu",
                     "booru"
-                ]
+                ],
+                "defaultPage": "gemini"
             }
         },
         "quickToggles": {
@@ -271,13 +286,5 @@
             "prevTab": "Ctrl+Page_Up",
             "cycleTab": "Ctrl+Tab"
         }
-    },
-    "bar": {
-        // Array of bar modes for each monitor. Hit Ctrl+Alt+Slash to cycle.
-        // Modes: "normal", "focus" (workspace indicator only), "nothing"
-        // Example for four monitors: ["normal", "focus", "normal", "nothing"]
-        "modes": [
-            "normal"
-        ]
     }
 }

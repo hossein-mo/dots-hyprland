@@ -6,7 +6,6 @@ if status is-interactive
     set -U FZF_LEGACY_KEYBINDINGS 0
     set -U SPACEFISH_TIME_SHOW true
 
-    alias pamcan=pacman
     alias hddd='sudo hdparm -y /dev/sdb /dev/sdd /dev/sde'
     alias hdds='sudo hdparm -C /dev/sdb /dev/sdd /dev/sde'
     alias venv='python -m venv'
@@ -15,6 +14,10 @@ if status is-interactive
     alias ls='ls --color=auto'
     alias getpass='pwgen -ysBv'
     alias lsd='lsd -l'
+    alias pamcan=pacman
+    alias ls='eza --icons'
+    alias clear "printf '\033[2J\033[3J\033[1;1H'"
+
 end
 #function fish_prompt -d "Write out the prompt"
 #    # This shows up as USER@HOST /home/user/ >, with the directory colored
@@ -23,6 +26,11 @@ end
 #    printf '%s@%s %s%s%s > ' $USER $hostname \
 #        (set_color $fish_color_cwd) (prompt_pwd) (set_color normal)
 #end
-if test -f ~/.cache/ags/user/generated/terminal/sequences.txt
-    cat ~/.cache/ags/user/generated/terminal/sequences.txt
+if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt
+    cat ~/.local/state/quickshell/user/generated/terminal/sequences.txt
 end
+
+# function fish_prompt
+#   set_color cyan; echo (pwd)
+#   set_color green; echo '> '
+# end

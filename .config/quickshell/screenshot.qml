@@ -40,7 +40,6 @@ ShellRoot {
     // Force initialization of some singletons
     Component.onCompleted: {
         MaterialThemeLoader.reapplyTheme();
-        ConfigLoader.loadConfig();
     }
 
     component TargetRegion: Rectangle {
@@ -87,7 +86,10 @@ ShellRoot {
         PanelWindow {
             id: panelWindow
             required property var modelData
-            property HyprlandMonitor hyprlandMonitor: Hyprland.monitorFor(modelData)
+            readonly property HyprlandMonitor hyprlandMonitor: Hyprland.monitorFor(modelData)
+            readonly property real monitorScale: hyprlandMonitor.scale
+            readonly property real monitorOffsetX: hyprlandMonitor.x
+            readonly property real monitorOffsetY: hyprlandMonitor.y
             property int activeWorkspaceId: hyprlandMonitor.activeWorkspace?.id ?? 0
             property string screenshotPath: `${root.screenshotDir}/image-${modelData.name}`
             property real dragStartX: 0
@@ -100,11 +102,18 @@ ShellRoot {
             property bool dragging: false
             property var mouseButton: null
             property var imageRegions: []
-            readonly property var windowRegions: filterWindowRegionsByLayers(
+            readonly property list<var> windowRegions: filterWindowRegionsByLayers(
                 root.windows.filter(w => w.workspace.id === panelWindow.activeWorkspaceId),
                 panelWindow.layerRegions
-            )
-            readonly property var layerRegions: {
+            ).map(window => {
+                return {
+                    at: [window.at[0] - panelWindow.monitorOffsetX, window.at[1] - panelWindow.monitorOffsetY],
+                    size: [window.size[0], window.size[1]],
+                    class: window.class,
+                    title: window.title,
+                }
+            })
+            readonly property list<var> layerRegions: {
                 const layersOfThisMonitor = root.layers[panelWindow.hyprlandMonitor.name]
                 const topLayers = layersOfThisMonitor.levels["2"]
                 const nonBarTopLayers = topLayers
@@ -116,7 +125,14 @@ ShellRoot {
                         namespace: layer.namespace,
                     }
                 })
-                return nonBarTopLayers;
+                const offsetAdjustedLayers = nonBarTopLayers.map(layer => {
+                    return {
+                        at: [layer.at[0] - panelWindow.monitorOffsetX, layer.at[1] - panelWindow.monitorOffsetY],
+                        size: layer.size,
+                        namespace: layer.namespace,
+                    }
+                });
+                return offsetAdjustedLayers;
             }
 
             property real targetedRegionX: -1
@@ -293,7 +309,10 @@ ShellRoot {
                     snipProc.startDetached();
                     Qt.quit();
                 }
-                command: ["bash", "-c", `magick ${StringUtils.shellSingleQuoteEscape(panelWindow.screenshotPath)} -crop ${panelWindow.regionWidth}x${panelWindow.regionHeight}+${panelWindow.regionX}+${panelWindow.regionY} - ` + `| ${panelWindow.mouseButton === Qt.LeftButton ? "wl-copy" : "swappy -f -"}`]
+                command: ["bash", "-c", 
+                    `magick ${StringUtils.shellSingleQuoteEscape(panelWindow.screenshotPath)} `
+                    + `-crop ${panelWindow.regionWidth * panelWindow.monitorScale}x${panelWindow.regionHeight * panelWindow.monitorScale}+${panelWindow.regionX * panelWindow.monitorScale}+${panelWindow.regionY * panelWindow.monitorScale} - ` 
+                    + `| ${panelWindow.mouseButton === Qt.LeftButton ? "wl-copy" : "swappy -f -"}`]
             }
 
             ScreencopyView {
@@ -414,6 +433,7 @@ ShellRoot {
                         }
                     }
 
+                    // Window regions
                     Repeater {
                         model: ScriptModel {
                             values: panelWindow.windowRegions
@@ -445,6 +465,7 @@ ShellRoot {
                         }
                     }
 
+                    // Layer regions
                     Repeater {
                         model: ScriptModel {
                             values: panelWindow.layerRegions
@@ -476,6 +497,7 @@ ShellRoot {
                         }
                     }
 
+                    // Image regions
                     Repeater {
                         model: ScriptModel {
                             values: panelWindow.imageRegions

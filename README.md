@@ -78,6 +78,8 @@ _latest and only style that I actively use. Other past styles are still there fo
 
 ### illogical-impulse<sup>Quickshell</sup>
 
+[Showcase video](https://www.youtube.com/watch?v=RPwovTInagE)
+
 | AI, settings app | Some widgets |
 |:---|:---------------|
 | ![image](https://github.com/user-attachments/assets/4d45e860-ae60-418a-a564-309b4939f5c4) | ![image](https://github.com/user-attachments/assets/4fcd63d9-0943-4b21-8737-4bed97b71961) |

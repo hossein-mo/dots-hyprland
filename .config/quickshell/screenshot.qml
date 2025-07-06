@@ -81,6 +81,7 @@ ShellRoot {
                 Loader {
                     id: regionIconLoader
                     active: regionRect.showIcon
+                    visible: active
                     sourceComponent: IconImage {
                         implicitSize: Appearance.font.pixelSize.larger
                         source: Quickshell.iconPath(AppSearch.guessIcon(regionRect.text), "image-missing")
@@ -517,7 +518,7 @@ ShellRoot {
                     // Image regions
                     Repeater {
                         model: ScriptModel {
-                            values: panelWindow.imageRegions
+                            values: Config.options.screenshotTool.showContentRegions ? panelWindow.imageRegions : []
                         }
                         delegate: TargetRegion {
                             z: 4

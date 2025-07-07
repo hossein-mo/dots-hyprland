@@ -26,9 +26,9 @@ end
 #    printf '%s@%s %s%s%s > ' $USER $hostname \
 #        (set_color $fish_color_cwd) (prompt_pwd) (set_color normal)
 #end
-if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt
-    cat ~/.local/state/quickshell/user/generated/terminal/sequences.txt
-end
+#if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt
+#    cat ~/.local/state/quickshell/user/generated/terminal/sequences.txt
+#end
 
 # function fish_prompt
 #   set_color cyan; echo (pwd)

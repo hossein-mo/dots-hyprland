@@ -1,7 +1,7 @@
-import "root:/services"
-import "root:/modules/common"
-import "root:/modules/common/widgets"
-import "root:/"
+import qs.services
+import qs.modules.common
+import qs.modules.common.widgets
+import qs
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Wayland
@@ -13,9 +13,9 @@ Item {
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar.screen)
     readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
 
-    property string activeWindowAddress: `0x${activeWindow.HyprlandToplevel.address}`
+    property string activeWindowAddress: `0x${activeWindow?.HyprlandToplevel?.address}`
     property bool focusingThisMonitor: HyprlandData.activeWorkspace.monitor == monitor.name
-    property var biggestWindow: HyprlandData.biggestWindowForWorkspace(HyprlandData.monitors[root.monitor.id].activeWorkspace.id)
+    property var biggestWindow: HyprlandData.biggestWindowForWorkspace(HyprlandData.monitors[root.monitor.id]?.activeWorkspace.id)
 
     implicitWidth: colLayout.implicitWidth
 

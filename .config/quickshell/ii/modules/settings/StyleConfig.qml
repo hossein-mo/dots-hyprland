@@ -3,14 +3,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Quickshell.Widgets
-import Quickshell.Hyprland
-import "root:/"
-import "root:/services/"
-import "root:/modules/common/"
-import "root:/modules/common/widgets/"
-import "root:/modules/common/functions/color_utils.js" as ColorUtils
-import "root:/modules/common/functions/file_utils.js" as FileUtils
+import qs
+import qs.services
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.modules.common.functions
 
 ContentPage {
     baseWidth: lightDarkButtonGroup.implicitWidth
@@ -208,6 +205,39 @@ ContentPage {
                     onCheckedChanged: {
                         Config.options.windows.centerTitle = checked;
                     }
+                }
+            }
+        }
+
+        ContentSubsection {
+            title: Translation.tr("Wallpaper parallax")
+
+            ConfigRow {
+                uniform: true
+                ConfigSwitch {
+                    text: Translation.tr("Depends on workspace")
+                    checked: Config.options.background.parallax.enableWorkspace
+                    onCheckedChanged: {
+                        Config.options.background.parallax.enableWorkspace = checked;
+                    }
+                }
+                ConfigSwitch {
+                    text: Translation.tr("Depends on sidebars")
+                    checked: Config.options.background.parallax.enableSidebar
+                    onCheckedChanged: {
+                        Config.options.background.parallax.enableSidebar = checked;
+                    }
+                }
+            }
+            ConfigSpinBox {
+                text: Translation.tr("Preferred wallpaper zoom (%)")
+                value: Config.options.background.parallax.workspaceZoom * 100
+                from: 100
+                to: 150
+                stepSize: 1
+                onValueChanged: {
+                    console.log(value/100)
+                    Config.options.background.parallax.workspaceZoom = value / 100;
                 }
             }
         }

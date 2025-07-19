@@ -1,13 +1,12 @@
-import "root:/modules/common"
-import "root:/modules/common/widgets"
-import "root:/services"
-import "root:/"
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.services
+import qs
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 
 
@@ -41,44 +40,33 @@ Item {
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Flickable {
-                id: flickable
-                anchors.fill: parent
-                contentHeight: volumeMixerColumnLayout.height
-
+            ListView {
+                id: listView
+                model: root.appPwNodes
                 clip: true
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Rectangle {
-                        width: flickable.width
-                        height: flickable.height
-                        radius: Appearance.rounding.normal
-                    }
+                anchors {
+                    fill: parent
+                    topMargin: 10
+                    bottomMargin: 10
                 }
+                spacing: 6
 
-                ColumnLayout {
-                    id: volumeMixerColumnLayout
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.margins: 10
-                    spacing: 10
-
-                    Repeater {
-                        model: root.appPwNodes
-
-                        VolumeMixerEntry {
-                            Layout.fillWidth: true
-                            required property var modelData
-                            node: modelData
-                        }
+                delegate: VolumeMixerEntry {
+                    // Layout.fillWidth: true
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        leftMargin: 10
+                        rightMargin: 10
                     }
+                    required property var modelData
+                    node: modelData
                 }
             }
 
             // Placeholder when list is empty
             Item {
-                anchors.fill: flickable
+                anchors.fill: listView
 
                 visible: opacity > 0
                 opacity: (root.appPwNodes.length === 0) ? 1 : 0
@@ -110,6 +98,15 @@ Item {
                 }
             }
         }
+
+        // Separator
+        Rectangle {
+            color: Appearance.m3colors.m3outlineVariant
+            implicitHeight: 1
+            Layout.fillWidth: true
+        }
+
+
         // Device selector
         ButtonGroup {
             id: deviceSelectorRowLayout

@@ -126,6 +126,8 @@ Singleton {
                     property real workspaceZoom: 1.07 // Relative to your screen, not wallpaper size
                     property bool enableSidebar: true
                 }
+                property string mantra: ""
+                property bool hideWhenFullscreen: true
             }
 
             property JsonObject bar: JsonObject {
@@ -183,6 +185,11 @@ Singleton {
                 property int suspend: 3
             }
 
+            property JsonObject conflictKiller: JsonObject {
+                property bool autoKillNotificationDaemons: false
+                property bool autoKillTrays: false
+            }
+
             property JsonObject dock: JsonObject {
                 property bool enable: false
                 property bool monochromeIcons: true
@@ -197,7 +204,7 @@ Singleton {
 
             property JsonObject interactions: JsonObject {
                 property JsonObject scrolling: JsonObject {
-                    property bool fasterTouchpadScroll: true // Enable faster scrolling with touchpad
+                    property bool fasterTouchpadScroll: false // Enable faster scrolling with touchpad
                     property int mouseScrollDeltaThreshold: 120 // delta >= this then it gets detected as mouse scroll rather than touchpad
                     property int mouseScrollFactor: 120
                     property int touchpadScrollFactor: 450
@@ -259,6 +266,9 @@ Singleton {
                     property string action: "/"
                     property string clipboard: ";"
                     property string emojis: ":"
+                    property string math: "="
+                    property string shellCommand: "$"
+                    property string webSearch: "?"
                 }
             }
 

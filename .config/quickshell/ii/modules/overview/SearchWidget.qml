@@ -296,7 +296,7 @@ Item { // Wrapper
                             return Cliphist.fuzzyQuery(searchString).map(entry => {
                                 return {
                                     cliphistRawString: entry,
-                                    name: entry.replace(/^\s*\S+\s+/, ""),
+                                    name: StringUtils.cleanCliphistEntry(entry),
                                     clickActionName: "",
                                     type: `#${entry.match(/^\s*(\S+)/)?.[1] || ""}`,
                                     execute: () => {
@@ -415,9 +415,11 @@ Item { // Wrapper
                         result = result.concat(launcherActionObjects);
 
                         /// Math result, command, web search ///
-                        if (!startsWithShellCommandPrefix) result.push(commandResultObject);
-                        if (!startsWithNumber && !startsWithMathPrefix) result.push(mathResultObject);
-                        if (!startsWithWebSearchPrefix) result.push(webSearchResultObject);
+                        if (Config.options.search.prefix.showDefaultActionsWithoutPrefix) {
+                            if (!startsWithShellCommandPrefix) result.push(commandResultObject);
+                            if (!startsWithNumber && !startsWithMathPrefix) result.push(mathResultObject);
+                            if (!startsWithWebSearchPrefix) result.push(webSearchResultObject);
+                        }
 
                         return result;
                     }

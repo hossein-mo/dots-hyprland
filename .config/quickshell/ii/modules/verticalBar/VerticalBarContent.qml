@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import qs
 import qs.services
@@ -202,6 +203,7 @@ Item { // Bar content region
                 vertical: true
                 Layout.fillWidth: true
                 Layout.fillHeight: false
+                invertSide: Config?.options.bar.bottom
             }
 
             RippleButton { // Right sidebar button
@@ -283,7 +285,7 @@ Item { // Bar content region
                         color: rightSidebarButton.colText
                     }
                     MaterialSymbol {
-                        text: Bluetooth.bluetoothConnected ? "bluetooth_connected" : Bluetooth.bluetoothEnabled ? "bluetooth" : "bluetooth_disabled"
+                        text: BluetoothStatus.connected ? "bluetooth_connected" : BluetoothStatus.enabled ? "bluetooth" : "bluetooth_disabled"
                         iconSize: Appearance.font.pixelSize.larger
                         color: rightSidebarButton.colText
                     }

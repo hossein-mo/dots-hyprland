@@ -19,7 +19,7 @@ MouseArea {
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     implicitWidth: 20
     implicitHeight: 20
-    onClicked: (event) => {
+    onPressed: (event) => {
         switch (event.button) {
         case Qt.LeftButton:
             item.activate();
@@ -31,10 +31,10 @@ MouseArea {
         event.accepted = true;
     }
     onEntered: {
-        tooltip.content = item.tooltipTitle.length > 0 ? item.tooltipTitle
+        tooltip.text = item.tooltipTitle.length > 0 ? item.tooltipTitle
                 : (item.title.length > 0 ? item.title : item.id);
-        if (item.tooltipDescription.length > 0) tooltip.content += " • " + item.tooltipDescription;
-        if (Config.options.bar.tray.showItemId) tooltip.content += "\n[" + item.id + "]";
+        if (item.tooltipDescription.length > 0) tooltip.text += " • " + item.tooltipDescription;
+        if (Config.options.bar.tray.showItemId) tooltip.text += "\n[" + item.id + "]";
     }
 
     Loader {
@@ -91,10 +91,11 @@ MouseArea {
         }
     }
 
-    StyledToolTip {
+    PopupToolTip {
         id: tooltip
         extraVisibleCondition: root.containsMouse
         alternativeVisibleCondition: extraVisibleCondition
+        anchorEdges: (!Config.options.bar.bottom && !Config.options.bar.vertical) ? Edges.Bottom : Edges.Top
     }
 
 }

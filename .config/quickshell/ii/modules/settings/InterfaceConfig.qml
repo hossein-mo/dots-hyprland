@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import qs
 import qs.services
 import qs.modules.common
 import qs.modules.common.widgets
@@ -68,7 +67,7 @@ ContentPage {
                     Config.options.background.clock.cookie.aiStyling = checked;
                 }
                 StyledToolTip {
-                    text: "Uses Gemini to categorize the wallpaper then picks a preset based on it.\nYou'll need to set Gemini API key on the left sidebar first.\nImages are downscaled for performance, but just to be safe,\ndo not select wallpapers with sensitive information."
+                    text: Translation.tr("Uses Gemini to categorize the wallpaper then picks a preset based on it.\nYou'll need to set Gemini API key on the left sidebar first.\nImages are downscaled for performance, but just to be safe,\ndo not select wallpapers with sensitive information.")
                 }
             }
 
@@ -461,6 +460,18 @@ ContentPage {
     ContentSection {
         icon: "lock"
         title: Translation.tr("Lock screen")
+
+        ConfigSwitch {
+            buttonIcon: "water_drop"
+            text: Translation.tr('Use Hyprlock (instead of Quickshell)')
+            checked: Config.options.lock.useHyprlock
+            onCheckedChanged: {
+                Config.options.lock.useHyprlock = checked;
+            }
+            StyledToolTip {
+                text: Translation.tr("If you want to somehow use fingerprint unlock...")
+            }
+        }
 
         ConfigSwitch {
             buttonIcon: "account_circle"

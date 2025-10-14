@@ -1,7 +1,5 @@
 pragma ComponentBehavior: Bound
 
-import qs
-import qs.services
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.modules.common.functions
@@ -53,7 +51,7 @@ Item {
         sourceComponent: BubbleDate {
             implicitWidth: dayBubbleLoader.targetSize
             implicitHeight: dayBubbleLoader.targetSize
-            bubbleIndex: 0
+            isMonth: false
             targetSize: dayBubbleLoader.targetSize
         }
     }
@@ -71,7 +69,7 @@ Item {
         sourceComponent: BubbleDate {
             implicitWidth: monthBubbleLoader.targetSize
             implicitHeight: monthBubbleLoader.targetSize
-            bubbleIndex: 1
+            isMonth: true
             targetSize: monthBubbleLoader.targetSize
         }
     }

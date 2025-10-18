@@ -32,19 +32,19 @@ function backup_clashing_targets(){
   done
 
   # Construct args_includes for rsync
+  local args_includes=()
   for i in "${clash_list[@]}"; do
-    current_target=$target_dir/$i
-    if [[ -d $current_target ]]; then
-      args_includes+=(--include="$current_target/")
-      args_includes+=(--include="$current_target/**")
+    if [[ -d "$target_dir/$i" ]]; then
+      args_includes+=(--include="/$i/")
+      args_includes+=(--include="/$i/**")
     else
-      args_includes+=(--include="$current_target")
+      args_includes+=(--include="/$i")
     fi
   done
-  args_includes+=(--exclude="*")
+  args_includes+=(--exclude='*')
 
   x mkdir -p $backup_dir
-  x rsync -av --progress "${arg_includes[@]}" "$target_dir/" "$backup_dir/"
+  x rsync -av --progress "${args_includes[@]}" "$target_dir/" "$backup_dir/"
 }
 
 function ask_backup_configs(){

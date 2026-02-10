@@ -25,8 +25,16 @@ if status is-interactive
     alias pamcan=pacman
     alias ls='eza --icons'
     alias pamcan pacman
+    alias clear "printf '\033[2J\033[3J\033[1;1H'" # fix: kitty doesn't clear properly
+    alias celar "printf '\033[2J\033[3J\033[1;1H'"
+    alias claer "printf '\033[2J\033[3J\033[1;1H'"
+
+
+    # No greeting
+    set fish_greeting
+
     alias ls 'eza --icons'
-    alias clear "printf '\033[2J\033[3J\033[1;1H'"
+    alias pamcan pacman
     alias q 'qs -c ii'
 
     set fish_greeting
@@ -40,4 +48,3 @@ end
 #end
 
 # Aliases
-

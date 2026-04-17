@@ -8,18 +8,18 @@ if status is-interactive
     set -U SPACEFISH_TIME_SHOW true
 
     # Use starship
-    function starship_transient_prompt_func
-        starship module character
-    end
-    if test "$TERM" != "linux"
-        starship init fish | source
-        enable_transience
-    end
-    
+    #function starship_transient_prompt_func
+    #    starship module character
+    #end
+    #if test "$TERM" != "linux"
+        # starship init fish | source
+        #enable_transience
+   # end
+
     # Colors
-    if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt
-        cat ~/.local/state/quickshell/user/generated/terminal/sequences.txt
-    end
+   # if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt
+    #    cat ~/.local/state/quickshell/user/generated/terminal/sequences.txt
+    # end
 
     # Aliases
     # kitty doesn't clear properly so we need to do this weird printing

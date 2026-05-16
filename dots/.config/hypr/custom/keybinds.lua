@@ -72,6 +72,35 @@ hl.bind("SUPER + CTRL + Print", hl.dsp.exec_cmd(
 ), { locked = true, non_consuming = true, description = "Utilities: Screenshot >> clipboard & file" })
 hl.bind("SUPER + CTRL + Print", hl.dsp.exec_cmd("grim - | wl-copy"), { locked = true, non_consuming = true })
 
+--##! Hardware keys
+hl.bind("XF86WebCam",        hl.dsp.exec_cmd("sudo webcam-control toggle -w \"USB2.0 FHD UVC WebCam\""), { locked = true })
+hl.bind("XF86TouchpadToggle", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/touchpad.sh"),                { locked = true })
+hl.bind("XF86Calculator",    hl.dsp.exec_cmd("gnome-calculator"))
+hl.bind("XF86Launch1",       hl.dsp.exec_cmd("feishin --ozone-platform-hint=auto"))
+
+--##! Lid Control
+hl.bind("switch:on:Lid Switch",  hl.dsp.exec_cmd("hyprctl keyword monitor \"eDP-1, disable\""),
+    { locked = true })
+hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd(
+    "hyprctl keyword monitor \"eDP-1, 2880x1620@120, 0x0, 1.5\" && killall ags ydotool; ags &"),
+    { locked = true })
+
+--##! Vicinae
+-- Unbind upstream launcher / overview that would conflict
+hl.unbind("SUPER + SUPER_L")
+hl.unbind("SUPER + SUPER_R")
+hl.unbind("SUPER_L")
+hl.unbind("SUPER_R")
+hl.unbind("SUPER + Tab")
+-- Unbind upstream clipboard / emoji binds replaced by Vicinae
+hl.unbind("SUPER + V")
+hl.unbind("SUPER + Period")
+
+hl.bind("SUPER + R",        hl.dsp.exec_cmd("vicinae toggle"),                                     { description = "Toggle Vicinae" })
+hl.bind("SUPER + V",        hl.dsp.exec_cmd("vicinae vicinae://launch/clipboard/history"),          { description = "Utilities: Clipboard history (Vicinae)" })
+hl.bind("CTRL + SUPER + E", hl.dsp.exec_cmd("vicinae vicinae://launch/files/search"),               { description = "Utilities: File search (Vicinae)" })
+hl.bind("SUPER + Period",   hl.dsp.exec_cmd("vicinae vicinae://launch/core/search-emojis"),         { description = "Utilities: Emoji search (Vicinae)" })
+
 --##! Send to workspace (restore Super+Shift+1-0)
 -- Upstream changed this to Super+Alt+code:N; restore the old Shift-based layout
 for i = 1, 10 do

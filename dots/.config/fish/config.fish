@@ -15,6 +15,7 @@ if status is-interactive
 #    set -x NO_PROXY git.hiveai.ir,130.185.77.224,localhost,127.0.0.1
     set -gx CHROME_EXECUTABLE chromium
     set -gx ANDROID_HOME /home/hossein/Android/Sdk
+    set -gx ANDROID_SDK_ROOT /home/hossein/Android/Sdk
     # Use starship
     #function starship_transient_prompt_func
     #    starship module character

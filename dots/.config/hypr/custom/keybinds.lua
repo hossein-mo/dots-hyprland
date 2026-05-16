@@ -62,15 +62,17 @@ hl.bind("CTRL + Print", hl.dsp.exec_cmd(
 ))
 
 -- Super+Print → fullscreen screenshot to clipboard (no monitor filter)
-hl.bind("SUPER + Print", hl.dsp.exec_cmd("grim - | wl-copy"),
+
+local grimhyprctl = "grim -o \"$(hyprctl activeworkspace -j | jq -r '.monitor')\""
+hl.bind("SUPER + Print", hl.dsp.exec_cmd(grimhyprctl .. " - | wl-copy"),
     { locked = true, description = "Utilities: Screenshot >> clipboard" })
 
 -- Super+Ctrl+Print → fullscreen screenshot to file + clipboard (no monitor filter)
 hl.bind("SUPER + CTRL + Print", hl.dsp.exec_cmd(
     "mkdir -p $(xdg-user-dir PICTURES)/Screenshots && " ..
-    "grim $(xdg-user-dir PICTURES)/Screenshots/Screenshot_\"$(date '+%Y-%m-%d_%H.%M.%S')\".png"
+    grimhyprctl .. " $(xdg-user-dir PICTURES)/Screenshots/Screenshot_\"$(date '+%Y-%m-%d_%H.%M.%S')\".png"
 ), { locked = true, non_consuming = true, description = "Utilities: Screenshot >> clipboard & file" })
-hl.bind("SUPER + CTRL + Print", hl.dsp.exec_cmd("grim - | wl-copy"), { locked = true, non_consuming = true })
+hl.bind("SUPER + CTRL + Print", hl.dsp.exec_cmd(grimhyprctl .. " - | wl-copy"), { locked = true, non_consuming = true })
 
 --##! Hardware keys
 hl.bind("XF86WebCam",        hl.dsp.exec_cmd("sudo webcam-control toggle -w \"USB2.0 FHD UVC WebCam\""), { locked = true })

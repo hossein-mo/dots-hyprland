@@ -6,7 +6,15 @@ if status is-interactive
     set -U SPACEFISH_EXIT_CODE_SYMBOL
     set -U FZF_LEGACY_KEYBINDINGS 0
     set -U SPACEFISH_TIME_SHOW true
-
+#    set -gx PUB_HOSTED_URL https://pub-azs.ir
+#    set -gx FLUTTER_STORAGE_BASE_URL https://pub-azs.ir
+#    set -gx PUB_HOSTED_URL https://mirror-flutter.runflare.com
+#    set -gx FLUTTER_STORAGE_BASE_URL https://mirror-flutter.runflare.com
+#    set -x HTTP_PROXY socks5://127.0.0.1:2334
+#    set -x HTTPS_PROXY socks5://127.0.0.1:2334
+#    set -x NO_PROXY git.hiveai.ir,130.185.77.224,localhost,127.0.0.1
+    set -gx CHROME_EXECUTABLE chromium
+    set -gx ANDROID_HOME /home/hossein/Android/Sdk
     # Use starship
     #function starship_transient_prompt_func
     #    starship module character

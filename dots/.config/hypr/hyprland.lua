@@ -25,6 +25,9 @@ end
 if is_file_exists(HOME .. "/.config/hypr/custom/general.lua") then
     require("custom.general")
 end
+if is_file_exists(HOME .. "/.config/hypr/custom/colors.lua") then
+    require("custom.colors")
+end
 if is_file_exists(HOME .. "/.config/hypr/custom/rules.lua") then
     require("custom.rules")
 end

@@ -29,17 +29,15 @@ hl.unbind("CTRL + SUPER + mouse_down")
 
 --##! Monitor management
 -- Move current workspace to a monitor
-hl.bind("CTRL + SUPER + Right", hl.dsp.exec_cmd("hyprctl dispatch movecurrentworkspacetomonitor r"), { description = "Monitor: Move workspace right" })
-hl.bind("CTRL + SUPER + Left",  hl.dsp.exec_cmd("hyprctl dispatch movecurrentworkspacetomonitor l"), { description = "Monitor: Move workspace left" })
-hl.bind("CTRL + SUPER + Up",    hl.dsp.exec_cmd("hyprctl dispatch movecurrentworkspacetomonitor u"), { description = "Monitor: Move workspace up" })
-hl.bind("CTRL + SUPER + Down",  hl.dsp.exec_cmd("hyprctl dispatch movecurrentworkspacetomonitor d"), { description = "Monitor: Move workspace down" })
--- hl.bind("CTRL + SUPER + ALT + code:10", hl.dsp.exec_cmd("hyprctl dispatch movecurrentworkspacetomonitor eDP-1"),    { description = "Monitor: Move workspace to eDP-1" })
--- hl.bind("CTRL + SUPER + ALT + code:11", hl.dsp.exec_cmd("hyprctl dispatch movecurrentworkspacetomonitor HDMI-A-1"), { description = "Monitor: Move workspace to HDMI-A-1" })
+hl.bind("CTRL + SUPER + Right", hl.dsp.workspace.move({ monitor = "r" }), { description = "Monitor: Move workspace right" })
+hl.bind("CTRL + SUPER + Left",  hl.dsp.workspace.move({ monitor = "l" }), { description = "Monitor: Move workspace left" })
+hl.bind("CTRL + SUPER + Up",    hl.dsp.workspace.move({ monitor = "u" }), { description = "Monitor: Move workspace up" })
+hl.bind("CTRL + SUPER + Down",  hl.dsp.workspace.move({ monitor = "d" }), { description = "Monitor: Move workspace down" })
 -- Focus a monitor
-hl.bind("SUPER + ALT + Right", hl.dsp.exec_cmd("hyprctl dispatch focusmonitor r"), { description = "Monitor: Focus right" })
-hl.bind("SUPER + ALT + Left",  hl.dsp.exec_cmd("hyprctl dispatch focusmonitor l"), { description = "Monitor: Focus left" })
-hl.bind("SUPER + ALT + Up",    hl.dsp.exec_cmd("hyprctl dispatch focusmonitor u"), { description = "Monitor: Focus up" })
-hl.bind("SUPER + ALT + Down",  hl.dsp.exec_cmd("hyprctl dispatch focusmonitor d"), { description = "Monitor: Focus down" })
+hl.bind("SUPER + ALT + Right", hl.dsp.focus({ monitor = "r" }), { description = "Monitor: Focus right" })
+hl.bind("SUPER + ALT + Left",  hl.dsp.focus({ monitor = "l" }), { description = "Monitor: Focus left" })
+hl.bind("SUPER + ALT + Up",    hl.dsp.focus({ monitor = "u" }), { description = "Monitor: Focus up" })
+hl.bind("SUPER + ALT + Down",  hl.dsp.focus({ monitor = "d" }), { description = "Monitor: Focus down" })
 
 --##! Screenshots (restore Print-key layout)
 -- Upstream rebinds Print → fullscreen and Ctrl+Print → screenshot+file; undo those

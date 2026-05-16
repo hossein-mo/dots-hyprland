@@ -76,6 +76,9 @@ hl.config({
         rounding_power = 2.4,
         rounding = 0,
 
+        active_opacity = 1.0,
+        inactive_opacity = 0.85,
+
         blur = {
             enabled = true,
             xray = true,

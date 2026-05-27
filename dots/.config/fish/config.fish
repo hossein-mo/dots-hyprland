@@ -17,13 +17,13 @@ if status is-interactive
     set -gx ANDROID_HOME /home/hossein/Android/Sdk
     set -gx ANDROID_SDK_ROOT /home/hossein/Android/Sdk
     # Use starship
-    #function starship_transient_prompt_func
-    #    starship module character
-    #end
-    #if test "$TERM" != "linux"
-        # starship init fish | source
-        #enable_transience
-   # end
+    function starship_transient_prompt_func
+        starship module character
+    end
+    if test "$TERM" != "linux"
+         starship init fish | source
+        enable_transience
+   end
 
     # Colors
    # if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt

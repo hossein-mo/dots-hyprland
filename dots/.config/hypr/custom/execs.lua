@@ -1,6 +1,6 @@
 hl.on("hyprland.start", function()
-    -- hl.exec_cmd("hiddify")
-    hl.exec_cmd("/opt/v2rayn-bin/v2rayN")
+    hl.exec_cmd("hiddify")
+    -- hl.exec_cmd("/opt/v2rayn-bin/v2rayN")
     hl.exec_cmd("sleep 5s && nextcloud --background")
     hl.exec_cmd("libinput-gestures")
     hl.exec_cmd("gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal foot")
